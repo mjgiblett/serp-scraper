@@ -4,11 +4,15 @@ import requests
 from dotenv import load_dotenv, set_key
 from pandas import DataFrame, ExcelWriter
 
+from src.constants import (
+    DOTENV_PATH,
+    KEY_API_PASSWORD,
+    KEY_API_USERNAME,
+    REQUEST_PAYLOAD,
+)
+
 load_dotenv()
 
-DOTENV_PATH = ".env"
-KEY_API_USERNAME = "API_USERNAME"
-KEY_API_PASSWORD = "API_PASSWORD"
 
 if KEY_API_USERNAME not in os.environ:
     os.environ[KEY_API_USERNAME] = input("Username: ")
@@ -17,22 +21,12 @@ if KEY_API_PASSWORD not in os.environ:
     os.environ[KEY_API_PASSWORD] = input("Password: ")
     set_key(DOTENV_PATH, KEY_API_PASSWORD, os.environ[KEY_API_PASSWORD])
 
-payload = {
-    "source": "google_search",
-    "query": "pharmacogenomics",
-    "geo_location": "Australia",
-    "locale": "en-us",
-    "parse": True,
-    "start_page": 1,
-    "pages": 2,
-    "limit": 10,
-}
 
 response = requests.request(
     "POST",
     "https://realtime.oxylabs.io/v1/queries",
     auth=(os.environ[KEY_API_USERNAME], os.environ[KEY_API_PASSWORD]),
-    json=payload,
+    json=REQUEST_PAYLOAD,
 )
 
 pages = response.json()["results"]
