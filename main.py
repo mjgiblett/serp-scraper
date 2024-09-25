@@ -2,27 +2,14 @@ import os
 from datetime import datetime
 
 import requests
-from dotenv import load_dotenv, set_key
 from pandas import DataFrame, ExcelWriter
 
-from src.constants import (
-    DATA_PATH,
-    DOTENV_PATH,
-    KEY_API_PASSWORD,
-    KEY_API_USERNAME,
-    REQUEST_PAYLOAD,
-)
+from src.constants import DATA_PATH, KEY_API_PASSWORD, KEY_API_USERNAME, REQUEST_PAYLOAD
+from src.environment import init_env
 
 
 def main() -> None:
-    load_dotenv()
-
-    if KEY_API_USERNAME not in os.environ:
-        os.environ[KEY_API_USERNAME] = input("Username: ")
-        set_key(DOTENV_PATH, KEY_API_USERNAME, os.environ[KEY_API_USERNAME])
-    if KEY_API_PASSWORD not in os.environ:
-        os.environ[KEY_API_PASSWORD] = input("Password: ")
-        set_key(DOTENV_PATH, KEY_API_PASSWORD, os.environ[KEY_API_PASSWORD])
+    init_env()
 
     response = requests.request(
         "POST",
