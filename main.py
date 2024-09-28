@@ -1,8 +1,4 @@
-from datetime import datetime
-
-from pandas import DataFrame, ExcelWriter
-
-from src.constants import DATA_PATH
+from src.save import save
 from src.scrape import scrape_pages
 
 
@@ -17,10 +13,7 @@ def main() -> None:
                 {"pos": i, "url": x["url"], "title": x["title"], "desc": x["desc"]}
             )
 
-    df = DataFrame(organic_results)
-    writer_path = f"{DATA_PATH}{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.xlsx"
-    with ExcelWriter(writer_path) as writer:
-        df.to_excel(writer)
+    save(organic_results)
 
 
 if __name__ == "__main__":
