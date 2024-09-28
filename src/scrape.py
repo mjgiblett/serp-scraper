@@ -10,7 +10,7 @@ from src.constants import (
 )
 
 
-def scrape_pages():
+def scrape_pages() -> list:
     response = requests.request(
         method="POST",
         url=REQUEST_URL,
