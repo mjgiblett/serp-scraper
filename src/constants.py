@@ -3,6 +3,7 @@ KEY_API_USERNAME = "API_USERNAME"
 KEY_API_PASSWORD = "API_PASSWORD"
 
 DATA_PATH = "data/"
+REQUEST_URL = "https://realtime.oxylabs.io/v1/queries"
 REQUEST_PAYLOAD = {
     "source": "google_search",
     "query": "pizza",

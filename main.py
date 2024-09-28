@@ -1,24 +1,13 @@
-import os
 from datetime import datetime
 
-import requests
 from pandas import DataFrame, ExcelWriter
 
-from src.constants import DATA_PATH, KEY_API_PASSWORD, KEY_API_USERNAME, REQUEST_PAYLOAD
-from src.environment import init_env
+from src.constants import DATA_PATH
+from src.scrape import scrape_pages
 
 
 def main() -> None:
-    init_env()
-
-    response = requests.request(
-        "POST",
-        "https://realtime.oxylabs.io/v1/queries",
-        auth=(os.environ[KEY_API_USERNAME], os.environ[KEY_API_PASSWORD]),
-        json=REQUEST_PAYLOAD,
-    )
-
-    pages = response.json()["results"]
+    pages = scrape_pages()
 
     organic_results = []
     for page, data in enumerate(pages):
@@ -35,4 +24,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    from src.environment import init_env
+
+    init_env()
     main()
