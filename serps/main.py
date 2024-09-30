@@ -6,9 +6,7 @@ import requests
 import yaml
 from pandas import DataFrame, ExcelWriter, concat
 
-from serps.constants import DATAFRAME_COLUMNS
-
-REQUEST_URL = "https://realtime.oxylabs.io/v1/queries"
+from serps.constants import DATAFRAME_COLUMNS, REQUEST_URL
 
 
 def mkdirs(file_path: Path | str) -> None:

@@ -5,18 +5,7 @@ from typing import Any
 
 import yaml
 
-from serps.constants import API_PASSWORD, API_USERNAME, QUERIES_PATH, RESULTS_PATH
-
-USER_CONFIG_PATH = Path(os.path.expanduser("~/.config/serps/serpsrc"))
-
-DOCUMENT_DIR_NAME = "SERP Scraper"
-
-DEFAULT_CONFIG = {
-    API_USERNAME: None,
-    API_PASSWORD: None,
-    RESULTS_PATH: os.path.expanduser(f"~/Documents/{DOCUMENT_DIR_NAME}/Results/"),
-    QUERIES_PATH: os.path.expanduser(f"~/Documents/{DOCUMENT_DIR_NAME}/Queries/"),
-}
+from serps.constants import DEFAULT_CONFIG, USER_CONFIG_PATH
 
 
 def merge_configs(default: dict[str, Any], overwrite: dict[str, Any]) -> dict[str, Any]:
