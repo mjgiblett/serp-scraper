@@ -66,7 +66,8 @@ def request_scrape(auth: tuple[str, str], payload: dict[str, Any]) -> DataFrame:
             for result in data["content"]["results"]["organic"]:
                 results.append(
                     {
-                        "Page": page,
+                        "Query": query,
+                        "Page": page + 1,
                         "Position": result["pos"],
                         "URL": result["url"],
                         "Title": result["title"],
