@@ -6,6 +6,8 @@ import requests
 import yaml
 from pandas import DataFrame, ExcelWriter, concat
 
+from serps.constants import DATAFRAME_COLUMNS
+
 REQUEST_URL = "https://realtime.oxylabs.io/v1/queries"
 
 
@@ -47,8 +49,7 @@ def load_list(file_path: Path | str) -> dict[str, Any] | None:
 
 
 def request_scrape(auth: tuple[str, str], payload: dict[str, Any]) -> DataFrame:
-    columns = ["Page", "Position", "URL", "Title", "Description"]
-    df = DataFrame(columns=columns)
+    df = DataFrame(columns=DATAFRAME_COLUMNS)
     queries = payload["queries"]
     payload.pop("queries")
     for query in queries:

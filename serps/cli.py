@@ -5,6 +5,7 @@ from glob import glob
 from pathlib import Path
 
 import click
+from pandas import DataFrame, concat
 
 from serps import __version__
 from serps.config import get_user_config, save_user_config
@@ -12,6 +13,7 @@ from serps.constants import (
     API_OPTION_SOURCE,
     API_PASSWORD,
     API_USERNAME,
+    DATAFRAME_COLUMNS,
     QUERIES_FILETYPE,
     QUERIES_PATH,
     RESULTS_PATH,
@@ -63,20 +65,24 @@ def auth(ctx, username: str, password: str) -> None:
     save_user_config(ctx.obj)
 
 
-@cli.command(help="Scrape.")
-@click.argument("list", required=True)
+@cli.command(help="Scrape lists.")
+@click.argument("lists", nargs=-1, required=True)
 @click.pass_context
-def scrape(ctx, list: str) -> None:
-    path = list_path(ctx.obj[QUERIES_PATH], list)
-    loaded = load_list(path)
-    if not loaded:
-        click.echo(f"Unable to load list {list}.")
-        return
+def scrape(ctx, lists: tuple[str]) -> None:
     auth = ctx.obj[API_USERNAME], ctx.obj[API_PASSWORD]
-    data = request_scrape(auth, loaded)
+    df = DataFrame(columns=DATAFRAME_COLUMNS)
+    for l in lists:
+        path = list_path(ctx.obj[QUERIES_PATH], l)
+        loaded = load_list(path)
+        if not loaded:
+            click.echo(f"Unable to load list {l}.")
+            return
+        click.echo(f"Requesting {l}...")
+        data = request_scrape(auth, loaded)
+        df = concat([df, data], ignore_index=True)
     conf_path = ctx.obj[RESULTS_PATH]
     file_path = f"{conf_path}{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.xlsx"
-    save_excel(file_path, data)
+    save_excel(file_path, df)
 
 
 @cli.command(help="Add query to specified list.")

@@ -31,4 +31,5 @@ API_OPTION_SOURCE = [
 
 # other
 
+DATAFRAME_COLUMNS = ["Page", "Position", "URL", "Title", "Description"]
 QUERIES_FILETYPE = ".yaml"
