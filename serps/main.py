@@ -47,31 +47,51 @@ def load_list(file_path: Path | str) -> dict[str, Any] | None:
 
 
 def request_scrape(auth: tuple[str, str], payload: dict[str, Any]) -> DataFrame:
+    global df
     df = DataFrame(columns=DATAFRAME_COLUMNS)
+    df.index = df.index + 1
     queries = payload["queries"]
     payload.pop("queries")
-    for query in queries:
-        payload["query"] = query
-        response = requests.request(
-            method="POST",
-            url=REQUEST_URL,
-            auth=auth,
-            json=payload,
-        )
-        pages = response.json().get("results", [])
-        results = []
-        for page, data in enumerate(pages):
-            for result in data["content"]["results"]["organic"]:
-                results.append(
-                    {
-                        "Query": query,
-                        "Page": page + 1,
-                        "Position": result["pos"],
-                        "URL": result["url"],
-                        "Title": result["title"],
-                        "Description": result["desc"],
-                    }
-                )
+
+    def query_loop():
+        global df
+        for query in queries:
+            print(f"Searching {query} from {payload["source"]}...")
+            payload["query"] = query
+            response = requests.request(
+                method="POST",
+                url=REQUEST_URL,
+                auth=auth,
+                json=payload,
+            )
+            pages = response.json().get("results", [])
+            results = []
+            for page, data in enumerate(pages):
+                for result in data["content"]["results"]["organic"]:
+                    results.append(
+                        {
+                            "Source": payload["source"],
+                            "Query": query,
+                            "Page": page + 1,
+                            "Position": result["pos"],
+                            "URL": result["url"],
+                            "Title": result["title"],
+                        }
+                    )
             df = concat([df, DataFrame(results)], ignore_index=True)
 
+    if type(payload["source"]) is tuple:
+        sources = payload["source"]
+        payload.pop("source")
+        for source in sources:
+            payload["source"] = source
+            query_loop()
+    else:
+        query_loop()
+
+    return df
+
+
+def get_unique(df: DataFrame) -> DataFrame:
+    df = df.drop_duplicates(subset="URL")
     return df

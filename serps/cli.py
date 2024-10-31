@@ -18,7 +18,7 @@ from serps.constants import (
     QUERIES_PATH,
     RESULTS_PATH,
 )
-from serps.main import load_list, request_scrape, save_excel, save_yaml
+from serps.main import get_unique, load_list, request_scrape, save_excel, save_yaml
 
 
 def version_msg() -> str:
@@ -67,8 +67,9 @@ def auth(ctx, username: str, password: str) -> None:
 
 @cli.command(help="Scrape lists.")
 @click.argument("lists", nargs=-1, required=True)
+@click.option("-u", "--unique", is_flag=True, help="Return unique.")
 @click.pass_context
-def scrape(ctx, lists: tuple[str]) -> None:
+def scrape(ctx, lists: tuple[str], unique: bool) -> None:
     auth = ctx.obj[API_USERNAME], ctx.obj[API_PASSWORD]
     df = DataFrame(columns=DATAFRAME_COLUMNS)
     for l in lists:
@@ -83,6 +84,12 @@ def scrape(ctx, lists: tuple[str]) -> None:
     conf_path = ctx.obj[RESULTS_PATH]
     file_path = f"{conf_path}{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.xlsx"
     save_excel(file_path, df)
+    if unique:
+        df_unique = get_unique(df)
+        file_path = (
+            f"{conf_path}{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}_unique.xlsx"
+        )
+        save_excel(file_path, df_unique)
 
 
 @cli.command(help="Add query to specified list.")
