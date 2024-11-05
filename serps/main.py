@@ -1,3 +1,4 @@
+import csv
 import os
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,15 @@ def save_excel(file_path: Path | str, data: DataFrame) -> None:
     with ExcelWriter(file_path) as writer:
         data.to_excel(writer)
 
+
+def save_csv(output_dir: Path, output: list[dict]) -> None:
+    if len(output) == 0:
+        print(f"Failed to save {output_dir}. Output empty.")
+        return
+    with open(output_dir, "w") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=output[0].keys())
+        writer.writeheader()
+        writer.writerows(output)
 
 def load_list(file_path: Path | str) -> dict[str, Any] | None:
     if not file_path:
